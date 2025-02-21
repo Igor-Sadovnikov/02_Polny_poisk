@@ -41,7 +41,7 @@ json_response = response.json()
 organization = json_response["features"][0]
 org_name = organization["properties"]["CompanyMetaData"]["name"]
 org_address = organization["properties"]["CompanyMetaData"]["address"]
-print('Ближайшая аптека:', org_name, org_address)
+# print('Ближайшая аптека:', org_name, org_address)
 
 point = organization["geometry"]["coordinates"]
 org_point = f"{point[0]},{point[1]}"
@@ -52,7 +52,7 @@ map_params = {
     "ll": address_ll,
     "spn": ",".join([str(spn_y), str(spn_x)]),
     "apikey": apikey,
-    "pt": "{0},pmrds".format(org_point)
+    "pt": "{0},pmrds".format(address_ll)
 }
 map_api_server = "https://static-maps.yandex.ru/v1"
 response = requests.get(map_api_server, params=map_params)
@@ -62,12 +62,12 @@ with open(map_file, "wb") as file:
     file.write(response.content)
 
 pygame.init()
-pygame.display.set_caption('Ближайшая аптека')
+pygame.display.set_caption('Полный поиск')
 screen = pygame.display.set_mode((600, 450))
 screen.blit(pygame.image.load(map_file), (0, 0))
 font = pygame.font.Font(None, 30)
-show_x = org_point.split(',')[1]
-show_y = org_point.split(',')[0]
+show_x = address_ll.split(',')[1]
+show_y = address_ll.split(',')[0]
 string_rendered = font.render(show_x + ', ' + show_y, 1, pygame.Color('black'))
 text_rect = string_rendered.get_rect()
 text_rect.top = 430
